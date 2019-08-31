@@ -1,37 +1,45 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import Todo from './todo'
-import { toggleTodo, deleteTodo } from 'store/actions/todos'
+import { fetchTodos, toggleTodo, deleteTodo, editTodo } from 'store/actions/todos'
 import getVisibleTodos from 'store/selectors'
 
-function TodosList({ todos, toggleTodo, deleteTodo }) {
+function TodosList({ todos, loading, fetchTodos, toggleTodo, deleteTodo, editTodo }) {
+
+    useEffect(() => {
+        fetchTodos()
+    }, [fetchTodos])
 
     return (
         <div className="todos__list">
-            {todos.length ? 
-                (
-                    <ul>
-                        {todos.map(todo =>
-                            <Todo
-                                key={todo.id}
-                                {...todo}
-                                onToggle={() => toggleTodo(todo.id)}
-                                onDelete={() => deleteTodo(todo.id)}
-                            />
-                        )}
-                    </ul>
-                ) : (
-                    <div className="todos__list-empty">No items</div>
+            {todos.length ?
+                <ul>
+                    {todos.slice(0).reverse().map(todo =>
+                        <Todo
+                            key={todo.id}
+                            {...todo}
+                            onToggle={() => toggleTodo(todo)}
+                            onDelete={() => deleteTodo(todo.id)}
+                            onEdit={(val) => editTodo(todo, val)}
+                        />
+                    )}
+                </ul>
+                : ( loading 
+                    ? <div className="loader">Loading...</div>
+                    : <div className="todos__list-empty">No items</div>
                 )
             }
         </div>
     )
 }
 
-const mapStateToProps = state => {
-    return { 
-        todos: getVisibleTodos(state) 
+const mapState = state => {
+    const { loading } = state.todos
+
+    return {
+        todos: getVisibleTodos(state),
+        loading
     }
 }
 
@@ -41,8 +49,11 @@ TodosList.propTypes = {
         text: PropTypes.string.isRequired,
         completed: PropTypes.bool.isRequired
     }).isRequired).isRequired,
+    loading: PropTypes.bool.isRequired,
+    fetchTodos: PropTypes.func.isRequired,
     toggleTodo: PropTypes.func.isRequired,
-    deleteTodo: PropTypes.func.isRequired
+    deleteTodo: PropTypes.func.isRequired,
+    editTodo: PropTypes.func.isRequired
 }
 
-export default connect(mapStateToProps, { toggleTodo, deleteTodo })(TodosList)
+export default connect(mapState, { fetchTodos, toggleTodo, deleteTodo, editTodo })(TodosList)

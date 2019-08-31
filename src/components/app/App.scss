@@ -8,27 +8,59 @@ $primary-btn: #395d8f;
   list-style: none;
 }
 
+@mixin primary-button {
+  background-color: $primary-btn;
+  padding: 2px 12px;
+  color: #fff;
+  box-shadow: none;
+  border: none;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  &:hover {
+    opacity: .8;
+  }
+}
+
+@mixin input {
+  flex: 1 1;
+  margin: 0 18px 0 0;
+  border: 1px solid #d2dcec;
+  border-radius: 3px;
+  padding: 8px 6px;
+}
+
 body {
   font-family: Arial, sans-serif;
+  font-size: 14px;
 }
 
 .container {
-  width: 1070px;
+  max-width: 1070px;
   margin: 0 auto;
+}
+
+@media all and (max-width: 1070px) {
+  .container {
+    max-width: 80%;
+  }
 }
 
 header {
   background-color: #fff;
   border-bottom: 1px solid $grey-border;
   padding: 1.3em 0;
-  nav > ul {
-    display: flex;
-    @include reset-list;
-    li {
-      margin-right: 8px;
-      a {
-        color: #4c79b5;
-        text-decoration: none;
+  nav {
+    font-size: 1.3em;
+    & > ul {
+      display: flex;
+      @include reset-list;
+      li {
+        margin-right: 8px;
+        a {
+          color: #4c79b5;
+          text-decoration: none;
+        }
       }
     }
   }
@@ -39,34 +71,27 @@ main {
   background-color: #f4f6fa;
 }
 
-.todos__container {
-  background-color: #fff;
-  border: 1px solid $grey-border;
-  border-radius: 5px;
-  .todos__add {
+.todos {
+  font-size: 1.2em;
+  &__container {
+    background-color: #fff;
+    border: 1px solid $grey-border;
+    border-radius: 5px;
+  }
+  &__add {
     padding: 18px;
     form {
       display: flex;
       input {
-        flex: 1;
-        margin: 0 18px 0 0;
-        border: 1px solid $grey-border;
-        border-radius: 3px;
-        padding: 8px 6px;
+        @include input();
       }
       button {
-        background-color: $primary-btn;
-        padding: 2px 24px;
-        color: #fff;
-        box-shadow: none;
-        border: none;
-        border-radius: 3px;
-        outline: none;
-        cursor: pointer;
+        @include primary-button();
+        padding: 6px 24px;
       }
     }
   }
-  .todos__filter {
+  &__filter {
     padding: 18px;
     border-bottom: 1px solid $grey-border;
     &-title {
@@ -78,7 +103,7 @@ main {
       outline: none;
     }
   }
-  .todos__list {
+  &__list {
     &-empty {
       font-size: 1.4em;
       font-weight: 400;
@@ -86,26 +111,22 @@ main {
       text-align: center;
       padding: 18px 0;
     }
+    .loader {
+      background: url('../../assets/images/loading.gif') center center no-repeat;
+      background-size: cover;
+      width: 90px;
+      height: 90px;
+      margin: 40px auto;
+      text-indent: -9999px;
+    }
     > ul {
       @include reset-list;
-      > li {
-        padding: 18px;
-        border-bottom: 1px solid $grey-border;
-        display: flex;
-        justify-content: space-between;
-        &:hover {
-          background-color: #dee6f1;
-          .todo__delete {
-            display: block;
-          }
-        }
-      }
     }
     label {
       position: relative;
       cursor: pointer;
-      font-size: 16px;
-      line-height: 25px;
+      font-size: 1rem;
+      line-height: 20px;
       input {
         position: absolute;
         opacity: 0;
@@ -118,44 +139,81 @@ main {
           }
         }
       }
-      .todo__checkmark {
-        display: inline-block;
-        vertical-align: middle;
-        height: 25px;
-        width: 25px;
-        background-color: #fff;
-        border-radius: 3px;
-        margin-right: 16px;
-        border: 1px solid $grey-border;
-        &:after {
-          content: "";
-          position: absolute;
-          display: none;
-          left: 9px;
-          top: 5px;
-          width: 5px;
-          height: 10px;
-          border: solid white;
-          border-width: 0 3px 3px 0;
-          -webkit-transform: rotate(45deg);
-          -ms-transform: rotate(45deg);
-          transform: rotate(45deg);
-        }
-      }
       &:hover input:not(:checked) ~ .todo__checkmark {
           background-color: #eee;
       }
     }
-    .todo__delete {
+  }
+}
+
+.todo {
+  padding: 18px;
+  border-bottom: 1px solid $grey-border;
+  display: flex;
+  justify-content: space-between;
+  &:hover {
+    background-color: #dee6f1;
+    .todo__controls-delete,
+    .todo__controls-edit {
+      display: block;
+    }
+  }
+  &__checkmark {
+    display: inline-block;
+    vertical-align: bottom;
+    height: 20px;
+    width: 20px;
+    background-color: #fff;
+    border-radius: 3px;
+    margin-right: 16px;
+    border: 1px solid $grey-border;
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 8px;
+      top: 4px;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 3px 3px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+  }
+  form {
+    display: flex;
+    flex-grow: 1;
+    input {
+      @include input();
+      padding: 5px 6px;
+    }
+  }
+  &__controls {
+    display: flex;
+    &-edit {
+      display: none;
+      @include primary-button();
+    }
+    &-delete {
       display: none;
       border: none;
       box-shadow: none;
       background: none;
       outline: none;
       font-size: 30px;
-      line-height: 25px;
+      line-height: 20px;
       color: $primary-btn;
       cursor: pointer;
+    }
+    &-cancel,
+    &-save {
+      @include primary-button();
+      margin: 0 2px;
+    }
+    &-cancel {
+      background-color: #aaa;
     }
   }
 }

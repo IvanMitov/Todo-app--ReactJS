@@ -1,19 +1,21 @@
 let initialState = {
-    todos: []
+    todos: [],
+    loading: true
 }
 
 const todos = (state = initialState, action) => {
     switch (action.type) {
+        case 'FETCH_TODOS':
+            return {
+                ...state,
+                todos: action.todos
+            }
         case 'ADD_TODO':
             return {
                 ...state,
                 todos: [
                     ...state.todos,
-                    {
-                        id: action.id,
-                        text: action.text,
-                        completed: false
-                    }
+                    action.todo
                 ]
             }
         case 'TOGGLE_TODO':
@@ -33,6 +35,21 @@ const todos = (state = initialState, action) => {
             return {
                 ...state,
                 todos: todosExceptDeleted
+            }
+        case 'EDIT_TODO':
+            const todosWithEdited = state.todos.map(todo =>
+                (todo.id === action.todo.id)
+                    ? { ...todo, text: action.todo.text }
+                    : todo
+            )
+            return {
+                ...state,
+                todos: todosWithEdited
+            }
+        case 'SET_LOADING':
+            return {
+                ...state,
+                loading: action.isLoading
             }
         default:
             return state

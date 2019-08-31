@@ -18,7 +18,7 @@ function TodosAdd({addTodo}) {
     return (
         <div className="todos__add">
             <form onSubmit={handleSubmit}>
-                <input name="todo" type="text" ref={todo} />
+                <input name="todo" type="text" ref={todo} placeholder="Add todo..."/>
                 <button type="submit">Add</button>
             </form>
         </div>

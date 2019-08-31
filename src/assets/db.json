@@ -1,0 +1,23 @@
+{
+  "todos": [],
+  "filters": [
+    {
+      "id": 1,
+      "name": "SHOW_ALL",
+      "text": "All"
+    },
+    {
+      "id": 2,
+      "name": "SHOW_ACTIVE",
+      "text": "Active"
+    },
+    {
+      "id": 3,
+      "name": "SHOW_COMPLETED",
+      "text": "Completed"
+    }
+  ],
+  "selectedFilter": {
+    "name": "SHOW_ALL"
+  }
+}

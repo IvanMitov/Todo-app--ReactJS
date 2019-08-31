@@ -2,7 +2,7 @@ import { createSelector } from 'reselect'
 import { VisibilityFilters } from '../constants/types'
 
 const getVisibleTodos = createSelector(
-    state => state.filters,
+    state => state.filters.selected,
     state => state.todos.todos,
     (filter, todos) => {
         switch (filter) {
